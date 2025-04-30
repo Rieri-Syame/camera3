@@ -5,44 +5,106 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Analyzer – Test-Strip</title>
   <style>
-    body {font-family:sans-serif;max-width:800px;margin:1rem auto;padding:0 1rem;}
-    #user-info, #profile-info {background:#eef;padding:.8em;border-radius:4px;margin-bottom:1rem;}
-    #canvasContainer {display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;}
-    canvas{border:1px solid #ccc;max-width:45vw;height:auto;}
-    .result{margin:.4rem 0;}
+    body {
+      font-family: sans-serif;
+      max-width: 800px;
+      margin: 1rem auto;
+      padding: 0 1rem;
+    }
+    #user-info, #profile-info {
+      background: #eef;
+      padding: .8em;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    #canvasContainer {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      max-width: 45vw;
+      height: auto;
+    }
+    .result {
+      margin: .4rem 0;
+    }
+    #sendBtn, #submitChecklist {
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.2rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #submitChecklist {
+      background: #28a745;
+    }
+    #sendBtn:hover {
+      background: #0056b3;
+    }
+    #submitChecklist:hover {
+      background: #218838;
+    }
+    #symptomChecklist {
+      display: none;
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #eef;
+      border-radius: 8px;
+    }
+    h3 {
+      margin-top: 1.5rem;
+    }
+    label {
+      display: block;
+      margin: 0.4rem 0;
+    }
+    textarea {
+      width: 100%;
+      margin-top: 0.5rem;
+      border-radius: 4px;
+    }
   </style>
   <script>
-    document.addEventListener('DOMContentLoaded',()=>{
-      const user    = JSON.parse(localStorage.getItem('demo_user')||'null');
-      const profile = JSON.parse(localStorage.getItem('demo_profile')||'null');
-      if (!user||!profile) return location.href='index.html';
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('demo_user') || 'null');
+      const profile = JSON.parse(localStorage.getItem('demo_profile') || 'null');
+      if (!user || !profile) return location.href = 'index.html';
       document.getElementById('user-info').textContent =
         `User: ${user.name} (${user.age} y) • ${user.email}`;
       document.getElementById('profile-info').textContent =
         `BHC: ${profile.bhc} | Hosp: ${profile.hospital} | AOG: ${profile.aog} | EDD: ${profile.edd}`;
     });
+
     var Module = {
-      locateFile(path){return 'https://docs.opencv.org/4.7.0/'+path},
-      onRuntimeInitialized(){
-        document.getElementById('loading').textContent='✅ OpenCV.js ready';
-        document.getElementById('takePicBtn').disabled=false;
+      locateFile(path) { return 'https://docs.opencv.org/4.7.0/' + path },
+      onRuntimeInitialized() {
+        document.getElementById('loading').textContent = '✅ OpenCV.js ready';
+        document.getElementById('takePicBtn').disabled = false;
       }
     };
   </script>
   <script src="https://docs.opencv.org/4.7.0/opencv.js"></script>
 </head>
 <body>
+
   <div id="user-info"></div>
   <div id="profile-info"></div>
+
   <h1>🔬 Test-Strip Analyzer</h1>
   <div id="loading">Loading OpenCV.js…</div>
   <button id="takePicBtn" disabled>Take Picture</button>
-  <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;"/>
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" />
 
   <div id="canvasContainer">
     <canvas id="canvasOutput"></canvas>
     <canvas id="canvasWarped" width="400" height="600"></canvas>
   </div>
+
   <div id="output">
     <div class="result">Glucose:   <strong id="res-glucose">—</strong></div>
     <div class="result">Protein:   <strong id="res-protein">—</strong></div>
@@ -50,14 +112,69 @@
     <div class="result">Leukocyte: <strong id="res-leukocyte">—</strong></div>
   </div>
 
+  <button id="sendBtn">SEND</button>
+
+  <form id="symptomChecklist">
+    <h2>📋 Signs and Symptoms Checklist</h2>
+
+    <h3>Preeclampsia</h3>
+    <label><input type="checkbox" name="preeclampsia" value="headache"> Severe headache</label>
+    <label><input type="checkbox" name="preeclampsia" value="vision"> Visual disturbances</label>
+    <label><input type="checkbox" name="preeclampsia" value="swelling"> Swelling</label>
+    <label><input type="checkbox" name="preeclampsia" value="breathing"> Difficulty breathing</label>
+    <label><input type="checkbox" name="preeclampsia" value="bp"> Elevated blood pressure</label>
+    <label>Others: <textarea name="preeclampsia_others" rows="2"></textarea></label>
+
+    <h3>Gestational Diabetes (GDM)</h3>
+    <label><input type="checkbox" name="gdm" value="thirst"> Excessive thirst</label>
+    <label><input type="checkbox" name="gdm" value="urination"> Frequent urination</label>
+    <label><input type="checkbox" name="gdm" value="fatigue"> Fatigue</label>
+    <label><input type="checkbox" name="gdm" value="nausea"> Nausea</label>
+    <label><input type="checkbox" name="gdm" value="vision"> Blurred vision</label>
+    <label><input type="checkbox" name="gdm" value="infection"> Recurrent infections</label>
+    <label>Others: <textarea name="gdm_others" rows="2"></textarea></label>
+
+    <h3>Urinary Tract Infection (UTI)</h3>
+    <label><input type="checkbox" name="uti" value="burning"> Burning urination</label>
+    <label><input type="checkbox" name="uti" value="urge"> Frequent urge</label>
+    <label><input type="checkbox" name="uti" value="pain"> Lower abdominal pain</label>
+    <label><input type="checkbox" name="uti" value="cloudy"> Cloudy or foul-smelling urine</label>
+    <label><input type="checkbox" name="uti" value="fever"> Fever or chills</label>
+    <label>Others: <textarea name="uti_others" rows="2"></textarea></label>
+
+    <button type="submit" id="submitChecklist">Submit Checklist</button>
+  </form>
+
   <script>
-    const takePicBtn  = document.getElementById('takePicBtn');
+    const takePicBtn = document.getElementById('takePicBtn');
     const cameraInput = document.getElementById('cameraInput');
     const refs = {
-      glucose:   [ {hex:'#7dcff4',label:'Negative'}, {hex:'#67b492',label:'+/-100'}, {hex:'#6ba864',label:'+250'}, {hex:'#7c7d39',label:'++500'}, {hex:'#654224',label:'+++1000'} ],
-      protein:   [ {hex:'#f4ee63',label:'Negative'}, {hex:'#e7e785',label:'Trace'}, {hex:'#dce480',label:'+30'}, {hex:'#b4cf80',label:'++100'}, {hex:'#a2ca95',label:'+++300'}, {hex:'#78b289',label:'++++1000'} ],
-      nitrite:   [ {hex:'#fef6df',label:'Negative'}, {hex:'#fae3e9',label:'Trace'}, {hex:'#d75f9f',label:'Positive'} ],
-      leukocyte: [ {hex:'#fef1de',label:'Negative'}, {hex:'#f9e2c8',label:'+25'}, {hex:'#f6dee4',label:'++75'}, {hex:'#c298bd',label:'++500'} ]
+      glucose: [
+        { hex: '#7dcff4', label: 'Negative' },
+        { hex: '#67b492', label: '+/-100' },
+        { hex: '#6ba864', label: '+250' },
+        { hex: '#7c7d39', label: '++500' },
+        { hex: '#654224', label: '+++1000' }
+      ],
+      protein: [
+        { hex: '#f4ee63', label: 'Negative' },
+        { hex: '#e7e785', label: 'Trace' },
+        { hex: '#dce480', label: '+30' },
+        { hex: '#b4cf80', label: '++100' },
+        { hex: '#a2ca95', label: '+++300' },
+        { hex: '#78b289', label: '++++1000' }
+      ],
+      nitrite: [
+        { hex: '#fef6df', label: 'Negative' },
+        { hex: '#fae3e9', label: 'Trace' },
+        { hex: '#d75f9f', label: 'Positive' }
+      ],
+      leukocyte: [
+        { hex: '#fef1de', label: 'Negative' },
+        { hex: '#f9e2c8', label: '+25' },
+        { hex: '#f6dee4', label: '++75' },
+        { hex: '#c298bd', label: '++500' }
+      ]
     };
 
     takePicBtn.addEventListener('click', () => cameraInput.click());
@@ -75,69 +192,52 @@
     });
 
     function detectAndWarp() {
-      // 1) Grab pixel data
       const out = document.getElementById('canvasOutput');
       const imgData = out.getContext('2d').getImageData(0, 0, out.width, out.height);
-
-      // 2) Build an RGBA Mat by hand (no matFromImageData)
       let src = new cv.Mat(imgData.height, imgData.width, cv.CV_8UC4);
       src.data.set(imgData.data);
 
-      // 3) Preprocess: grayscale, blur, adaptive threshold, open
-      let gray   = new cv.Mat(),
-          thresh = new cv.Mat();
+      let gray = new cv.Mat(), thresh = new cv.Mat();
       cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
       cv.GaussianBlur(gray, gray, new cv.Size(5,5), 0);
-      cv.adaptiveThreshold(
-        gray, thresh, 255,
-        cv.ADAPTIVE_THRESH_GAUSSIAN_C,
-        cv.THRESH_BINARY_INV,
-        11, 2
-      );
+      cv.adaptiveThreshold(gray, thresh, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
       let kernel = cv.Mat.ones(3,3,cv.CV_8U);
       cv.morphologyEx(thresh, thresh, cv.MORPH_OPEN, kernel);
 
-      // 4) Find quadrilateral contours
       let cnts = new cv.MatVector(), hier = new cv.Mat();
       cv.findContours(thresh, cnts, hier, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
       let squares = [];
       for (let i=0; i<cnts.size(); i++) {
-        let cnt = cnts.get(i),
-            approx = new cv.Mat();
+        let cnt = cnts.get(i), approx = new cv.Mat();
         cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
         if (approx.rows===4 && cv.contourArea(approx)>400) {
           let pts = [];
-          for (let j=0; j<4; j++) {
-            pts.push({ x: approx.data32S[2*j], y: approx.data32S[2*j+1] });
-          }
-          let cx = pts.reduce((s,p)=>s+p.x,0)/4,
-              cy = pts.reduce((s,p)=>s+p.y,0)/4;
+          for (let j=0; j<4; j++) pts.push({ x: approx.data32S[2*j], y: approx.data32S[2*j+1] });
+          let cx = pts.reduce((s,p)=>s+p.x,0)/4, cy = pts.reduce((s,p)=>s+p.y,0)/4;
           squares.push({ centroid:{x:cx,y:cy}, corners: pts });
         }
         approx.delete();
       }
-      console.log('detected corner squares:', squares.length);
+
       if (squares.length !== 4) {
         document.getElementById('loading').textContent = '❌ Failed to detect 4 corner markers.';
         [src, gray, thresh, cnts, hier, kernel].forEach(m=>m.delete());
         return;
       }
 
-      // 5) Sort corners & warp to 400×600
       squares.sort((a,b)=>a.centroid.y - b.centroid.y);
       const top = squares.slice(0,2).sort((a,b)=>a.centroid.x - b.centroid.x),
             bot = squares.slice(2,4).sort((a,b)=>a.centroid.x - b.centroid.x),
             pts = [ top[0].centroid, top[1].centroid, bot[1].centroid, bot[0].centroid ]
                     .flatMap(p=>[p.x,p.y]),
             W = 400, H = 600;
+
       let srcTri = cv.matFromArray(4,1,cv.CV_32FC2, pts),
           dstTri = cv.matFromArray(4,1,cv.CV_32FC2, [0,0,W,0,W,H,0,H]),
-          M      = cv.getPerspectiveTransform(srcTri, dstTri),
-          dst    = new cv.Mat();
+          M = cv.getPerspectiveTransform(srcTri, dstTri),
+          dst = new cv.Mat();
       cv.warpPerspective(src, dst, M, new cv.Size(W,H));
       cv.imshow('canvasWarped', dst);
-
-      // cleanup
       [src, gray, thresh, cnts, hier, kernel, srcTri, dstTri, M].forEach(m=>m.delete());
       setTimeout(analyzePads, 100);
     }
@@ -173,7 +273,16 @@
       });
       return label;
     }
+
+    document.getElementById('sendBtn').addEventListener('click', () => {
+      document.getElementById('symptomChecklist').style.display = 'block';
+      document.getElementById('sendBtn').style.display = 'none';
+    });
+
+    document.getElementById('symptomChecklist').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert("Checklist submitted! (This is where saving logic would go.)");
+    });
   </script>
 </body>
 </html>
-
