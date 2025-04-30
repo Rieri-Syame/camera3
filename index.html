@@ -17,9 +17,9 @@
   <div id="auth">
     <h2>Create Account</h2>
     <form id="signupForm">
-      <input id="name" name="name"    type="text"    placeholder="Full Name" required />
-      <input id="age"  name="age"     type="number"  placeholder="Age" required />
-      <input id="email"name="email"   type="email"   placeholder="Email Address" required />
+      <input id="name"    name="name"    type="text"    placeholder="Full Name" required />
+      <input id="age"     name="age"     type="number"  placeholder="Age" required />
+      <input id="email"   name="email"   type="email"   placeholder="Email Address" required />
       <input id="address" name="address" type="text"    placeholder="Home Address" required />
       <input id="contact" name="contact" type="tel"     placeholder="Contact Number" required />
       <button type="submit">Sign Up & Continue</button>
@@ -28,20 +28,21 @@
   </div>
 
   <script>
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
+    const form = document.getElementById('signupForm');
+    const msg  = document.getElementById('msg');
+    form.addEventListener('submit', e => {
       e.preventDefault();
-      const name    = document.getElementById('name').value.trim();
-      const age     = document.getElementById('age').value.trim();
-      const email   = document.getElementById('email').value.trim();
-      const address = document.getElementById('address').value.trim();
-      const contact = document.getElementById('contact').value.trim();
-      const msg     = document.getElementById('msg');
+      const name    = form.name.value.trim();
+      const age     = form.age.value.trim();
+      const email   = form.email.value.trim();
+      const address = form.address.value.trim();
+      const contact = form.contact.value.trim();
       if (!name || !age || !email || !address || !contact) {
         msg.textContent = 'Please fill all fields.';
         return;
       }
       localStorage.setItem('demo_user', JSON.stringify({ name, age, email, address, contact }));
-      window.location.href = 'profile.html';
+      location.href = 'profile.html';
     });
   </script>
 </body>
