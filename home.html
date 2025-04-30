@@ -1,49 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Home – Test-Strip Analyzer</title>
   <style>
     body {
       font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
       margin: 0;
+      padding: 2rem;
       background: #f0f2f5;
     }
     h1 {
-      margin-bottom: 2rem;
+      margin-bottom: 0.5rem;
     }
-    .nav-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      width: 250px;
-    }
-    button {
+    #summary {
+      margin: 1rem 0;
       padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .buttons button {
+      flex: 1;
+      padding: 1rem;
+      font-size: 1rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .buttons button:hover {
+      background: #0056b3;
+    }
+    #notifications {
+      margin-top: 2rem;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .notif-title {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    ul {
+      padding-left: 1.2rem;
+    }
+    #contact-btn {
+      margin-top: 2rem;
+      padding: 1rem;
+      width: 100%;
+      background: #28a745;
+      color: white;
       font-size: 1rem;
       border: none;
       border-radius: 6px;
-      background: #007bff;
-      color: white;
       cursor: pointer;
     }
-    button:hover {
-      background: #0056b3;
+    #contact-btn:hover {
+      background: #218838;
     }
   </style>
 </head>
 <body>
-  <h1>Main Menu</h1>
-  <div class="nav-buttons">
-    <button onclick="location.href='analyzer.html'">🧪 Analyzer</button>
-    <button onclick="location.href='education.html'">📚 Education Module</button>
-    <button onclick="location.href='profile.html'">👤 View Profile</button>
+  <h1 id="welcome">Welcome!</h1>
+
+  <div id="summary">
+    <h3>Latest Urine Test Result:</h3>
+    <p id="latestResult">No recent test results available.</p>
   </div>
+
+  <div class="buttons">
+    <button onclick="location.href='analyzer.html'">🧪 Analyzer</button>
+    <button onclick="location.href='education.html'">📚 Education</button>
+    <button onclick="location.href='profile.html'">👤 Profile</button>
+  </div>
+
+  <div id="notifications">
+    <div class="notif-title">Notifications</div>
+    <ul>
+      <li>📅 Appointment: Check-up on May 5, 10:00 AM</li>
+      <li>🩺 Health Tip: Stay hydrated and monitor urine color</li>
+      <li>📢 System: New analyzer module available!</li>
+    </ul>
+  </div>
+
+  <button id="contact-btn" onclick="alert('Call or visit your local Barangay Health Center.')">
+    📞 Contact Barangay Health Center
+  </button>
+
+  <script>
+    // Load user's name from localStorage
+    const user = JSON.parse(localStorage.getItem('demo_user'));
+    if (user && user.name) {
+      document.getElementById('welcome').textContent = `Welcome, ${user.name}!`;
+    }
+
+    // Example: load last urine result from localStorage or use default
+    const latestResult = localStorage.getItem('latest_urine_result') || 'No recent test results available.';
+    document.getElementById('latestResult').textContent = latestResult;
+  </script>
 </body>
 </html>
